@@ -3,6 +3,7 @@ use scraper::{Html, Selector};
 // use cdb;
 use std::fs;
 use std::io::{BufWriter, Write};
+const KINTOKU_TXT: &str = "金特.txt";
 
 // urls = ("https://pawasoccer.gamewith.jp/article/show/37116", "https://pawasoccer.gamewith.jp/article/show/36772")
 // a_lists.extend(soup.select("table.sorttable > tr > td:first-child > a"))
@@ -74,15 +75,8 @@ impl Kintoku {
 
 fn main() {
 
-    // web_view::builder()
-    //     .title("Hello world!")
-    //     .content(web_view::Content::Html(HTML))
-    //     .size(320, 240)
-    //     .user_data(())
-    //     .invoke_handler(|_, _| Ok(()))
-    //     .run()
-    //     .unwrap();
-    // let mut urlhash: HashMap<String, String> = HashMap::new();
+    println!("■■金特ツール■■");
+
     let mut kintoku_all: Vec<Kintoku> = Vec::new();
     let url = "https://pawasoccer.gamewith.jp/article/show/45385";
 
@@ -97,7 +91,10 @@ fn main() {
 }
 
 fn file_save(kintoku_all: &Vec<Kintoku>) {
-    let mut f = BufWriter::new(fs::File::create("金特.txt").unwrap());
+
+    println!("{}を保存します。", KINTOKU_TXT);
+
+    let mut f = BufWriter::new(fs::File::create(KINTOKU_TXT).unwrap());
     writeln!(f, "name\turl\tEXC\tCF\tST\tWG\tOMF\tCMF\tSMF\tDMF\tCB\tSB\tGK").unwrap();
 
     for v in kintoku_all {
@@ -120,7 +117,11 @@ fn scrap(html: &str, kintoku_all: &mut Vec<Kintoku>) {
     let fragment = Html::parse_document(html);
 
     let selector_anc = Selector::parse("table.sorttable a").unwrap();
+    let selector_h1 = Selector::parse("h1 span._main").unwrap();
 
+    if let Some(h1) = fragment.select(&selector_h1).next() {
+        println!("「{}」から一覧をもってきます。", h1.inner_html());
+    }
     for node in fragment.select(&selector_anc) {
         let url = node.value().attr("href").unwrap_or("");
         let nam = node.inner_html();
@@ -141,6 +142,7 @@ fn scrap_sub(url: &str) -> Kintoku {
     let fragment = Html::parse_document(&html_text as &str);
 
     // h2 id=pwsk_anchor01の直後にテーブルがあって、その最後が同時取得不可
+    let selector_h1 = Selector::parse("h1 span._main").unwrap();
     let selector_xcv = Selector::parse("#pwsk_anchor01 + table tr:last-child a").unwrap();
     let selector_cf = Selector::parse("#article-body > h3 + table tr:nth-child(2) td").unwrap();
     let selector_st = Selector::parse("#article-body > h3 + table tr:nth-child(3) td").unwrap();
@@ -152,6 +154,10 @@ fn scrap_sub(url: &str) -> Kintoku {
     let selector_cb = Selector::parse("#article-body > h3 + table tr:nth-child(9) td").unwrap();
     let selector_sb = Selector::parse("#article-body > h3 + table tr:nth-child(10) td").unwrap();
     let selector_gk = Selector::parse("#article-body > h3 + table tr:nth-child(11) td").unwrap();
+
+    if let Some(h1) = fragment.select(&selector_h1).next() {
+        println!("Get Information from: {}", h1.inner_html());
+    }
 
     let mut k = Kintoku::init(url);
 

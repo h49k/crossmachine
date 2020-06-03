@@ -9,7 +9,7 @@ use std::io::{BufWriter, Write};
 
 // CREATE DATABASE pawasaka TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'C' LC_CTYPE = 'C';
 // CREATE TABLE url_title ( url varchar(50), titile varchar(128) not null, CONSTRAINT PRIMARY KEY (url));
-
+// #![windows_subsystem="windows"]
 struct Kintoku {
     name: String,
     exclusive: String,
@@ -65,7 +65,23 @@ impl Kintoku {
     }
 }
 
+// const HTML: &str = r#"<!DOCTYPE html>
+// <html>
+//     <body>
+//         Hello world from Rust!
+//     </body>
+// </html>"#;
+
 fn main() {
+
+    // web_view::builder()
+    //     .title("Hello world!")
+    //     .content(web_view::Content::Html(HTML))
+    //     .size(320, 240)
+    //     .user_data(())
+    //     .invoke_handler(|_, _| Ok(()))
+    //     .run()
+    //     .unwrap();
     // let mut urlhash: HashMap<String, String> = HashMap::new();
     let mut kintoku_all: Vec<Kintoku> = Vec::new();
     let url = "https://pawasoccer.gamewith.jp/article/show/45385";
